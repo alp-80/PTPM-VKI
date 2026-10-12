@@ -1,0 +1,5 @@
+*/Logs
+/.vscode
+/venv
+*.log
+/idea
