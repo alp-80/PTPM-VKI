@@ -111,46 +111,39 @@ def register_user(login: str, password: str, confirm: str):
 
 
 def main():
+    os.makedirs("Logs", exist_ok=True)
+    import sys
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s | [%(levelname)-7s] | %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        handlers=[
+            logging.StreamHandler(sys.stdout),
+            logging.FileHandler("Logs/file_txt.log", encoding="utf-8")
+        ]
+    )
     while True:
         try:
-            print("=== Регистрация пользователя ===")
-            login    = input("Введите логин (телефон/email/строка): ")
+            print("\n=== Регистрация пользователя ===")
+            print("(введите 'exit' в поле логина для выхода)")
+            login = input("Введите логин (телефон/email/строка): ")
+            if login.strip().lower() in ("exit", "quit", "q", "выход"):
+                break
             password = input("Введите пароль: ")
             confirm  = input("Подтвердите пароль: ")
-
         except (EOFError, KeyboardInterrupt):
-            logging.warning("Ввод прерван пользователем")
-            print("\nВвод прерван.")
-            return
-        
-        if login.strip().lower() in ("q"):
-                break
+            break
 
-        logging.info(
-            f"Запрос регистрации | login='{login}' | "
-            f"password='{password}' | confirm='{confirm}'"
-        )
-
+        logging.info(f"Запрос регистрации | login='{login}' | "
+                     f"password='{password}' | confirm='{confirm}'")
         result, message = register_user(login, password, confirm)
-
         if result:
-            logging.info(
-                f"УСПЕХ регистрации | login='{login}' | "
-                f"password='{password}' | result=True"
-            )
-            print("\n--- Результат ---")
-            print("True")
-            print("")
+            logging.info(f"УСПЕХ | login='{login}' | result=True")
+            print("\n--- Результат ---\nTrue\n")
         else:
-            logging.warning(
-                f"ОТКАЗ регистрации | login='{login}' | "
-                f"password='{password}' | reason='{message}'"
-            )
-            print("\n--- Результат ---")
-            print("False")
+            logging.warning(f"ОТКАЗ | login='{login}' | reason='{message}'")
+            print("\n--- Результат ---\nFalse")
             print(message)
-
-    logging.info("Приложение завершено")
 
 
 if __name__ == "__main__":
